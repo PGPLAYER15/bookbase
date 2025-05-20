@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import  Optional
 from app.schemas.user import UserCreate, UserUpdate, UserRead
 
 class UserRepository(ABC):

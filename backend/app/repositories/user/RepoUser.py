@@ -2,14 +2,14 @@ from typing import List, Optional
 from sqlalchemy.orm import Session
 from app.models.user.user import User
 from app.schemas.user import UserCreate, UserUpdate, UserRead
-from app.repositories.IRepoUser import UserRepository
+from app.repositories.user.IRepoUser import UserRepository
 
 class RepoUser(UserRepository):
     def __init__(self, db: Session):
         self.db = db
 
     def create_user(self, user: UserCreate) -> User:
-        db_user = user(**user.dict())
+        db_user = User(**user.dict())
         self.db.add(db_user)
         self.db.commit()
         self.db.refresh(db_user)
@@ -39,4 +39,4 @@ class RepoUser(UserRepository):
             return False
         self.db.delete(db_user)
         self.db.commit()
-        return True
+        return True 

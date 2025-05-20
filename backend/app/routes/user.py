@@ -1,13 +1,13 @@
 from typing import Union
-from fastapi import FastAPI ,APIRouter,Depends , HTTPException
+from fastapi import APIRouter,Depends , HTTPException
 from sqlalchemy.orm import Session
 from app.schemas.user import UserCreate, UserUpdate, UserRead
-from app.repositories.RepoUser import RepoUser
+from app.repositories.user.RepoUser import RepoUser
 from app.dependencies import get_db
 
 router = APIRouter()
 
-@router.post("/users", response_model=UserRead)
+@router.post("/users", response_model=UserCreate)
 async def create_user(user: UserCreate, db: Session = Depends(get_db)):
     user_repo = RepoUser(db)
     db_user = user_repo.create_user(user)
@@ -20,3 +20,11 @@ async def get_user(user_id: int, db: Session = Depends(get_db)):
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return user
+
+@router.put("/users/{user_id}", response_model=UserUpdate)
+async def update_user(user_id: int, user_update: UserUpdate, db: Session = Depends(get_db)):
+    user_repo = RepoUser(db)
+    db_user = user_repo.update_user(user_id, user_update)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user
