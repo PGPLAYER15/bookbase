@@ -7,7 +7,6 @@ class UserLikeCreate(BaseModel):
 class UserLikeRead(BaseModel):
     user_id: int
     book_id: int
-    # Puedes añadir más campos si necesitas (ej.: nombre del libro)
 
     class Config:
-        from_attributes = True  # Para compatibilidad con ORM
+        from_attributes = True  

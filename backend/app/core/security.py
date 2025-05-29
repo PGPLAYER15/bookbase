@@ -4,8 +4,8 @@ from typing import Optional
 from app.core.config import settings
 from passlib.context import CryptContext
 
-# Configuración de JWT (deberías mover estos valores a tus variables de entorno)
-SECRET_KEY = settings.SECRET_KEY  # Ej: "tu_clave_secreta_super_segura"
+
+SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 

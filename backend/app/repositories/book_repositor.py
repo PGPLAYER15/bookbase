@@ -10,7 +10,6 @@ class RepoBook(BookRepository):
         self.db = db
 
     def create_book(self, book: BookCreate) -> BookRead:
-        """Crea un libro. Lanza ValueError si el título ya existe."""
         try:
             if self.db.query(Book).filter(Book.title == book.title).first():
                 raise ValueError("El título ya existe")
@@ -26,7 +25,6 @@ class RepoBook(BookRepository):
             raise e
 
     def get_book_by_id(self, book_id: int) -> Optional[BookRead]:
-        """Obtiene un libro por ID. Devuelve None si no existe."""
         try:
             db_book = self.db.query(Book).filter(Book.id == book_id).first()
             if db_book:
@@ -36,7 +34,6 @@ class RepoBook(BookRepository):
             raise e
 
     def get_all_books(self) -> List[BookRead]:
-        """Obtiene todos los libros."""
         try:
             books = self.db.query(Book).all()
             return [BookRead.from_orm(book) for book in books]
@@ -44,7 +41,6 @@ class RepoBook(BookRepository):
             raise e
 
     def update_book(self, book_id: int, book_update: BookUpdate) -> Optional[BookRead]:
-        """Actualiza un libro. Devuelve None si no existe."""
         try:
             db_book = self.db.query(Book).filter(Book.id == book_id).first()
             if not db_book:
@@ -61,7 +57,6 @@ class RepoBook(BookRepository):
             raise e
 
     def delete_book(self, book_id: int) -> bool:
-        """Elimina un libro. Devuelve False si no existe."""
         try:
             db_book = self.db.query(Book).filter(Book.id == book_id).first()
             if not db_book:
