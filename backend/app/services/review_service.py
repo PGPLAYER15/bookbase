@@ -1,7 +1,7 @@
 from typing import List, Optional
-from backend.app.models.review import Review
+from app.models.review import Review
 from app.schemas.review import ReviewCreate, ReviewUpdate
-from backend.app.interfaces.Ireview_repository import IReviewRepository
+from app.interfaces.Ireview_repository import IReviewRepository
 
 class ReviewService:
     def __init__(self, review_repo: IReviewRepository):

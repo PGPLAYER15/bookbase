@@ -1,12 +1,29 @@
-import os
-from sqlalchemy import create_engine
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
-from dotenv import load_dotenv
+from app.core.config import settings
 
-load_dotenv() 
+# Configuración para PostgreSQL
+engine = create_async_engine(
+    settings.DATABASE_URL,
+    echo=True,  # Muestra queries en consola (solo desarrollo)
+    pool_size=10,
+    max_overflow=20,
+    pool_pre_ping=True
+)
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+# Sesión para interactuar con la DB
+AsyncSessionLocal = sessionmaker(
+    bind=engine,
+    class_=AsyncSession,
+    expire_on_commit=False,
+    autoflush=False
+)
 
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
+
+from typing import AsyncGenerator
+
+# Función para obtener sesión (usada en dependencias)
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    async with AsyncSessionLocal() as session:
+        yield session

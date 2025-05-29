@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
 from jose import jwt
 from typing import Optional
-from backend.app.core.config import settings  # Asume que tienes un archivo de configuración
+from app.core.config import settings
+from passlib.context import CryptContext
 
 # Configuración de JWT (deberías mover estos valores a tus variables de entorno)
 SECRET_KEY = settings.SECRET_KEY  # Ej: "tu_clave_secreta_super_segura"
@@ -24,3 +25,13 @@ def verify_token(token: str) -> dict:
         return payload
     except jwt.JWTError:
         return None
+    
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def get_password_hash(password: str) -> str:
+    return pwd_context.hash(password)
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return pwd_context.verify(plain_password, hashed_password)
+# ...existing code...

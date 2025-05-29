@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
-from backend.app.core.dependencies import CurrentUser, get_user_service
+from app.core.dependencies import CurrentUser, get_user_service
 from app.schemas.user import UserRead, UserUpdate
-from backend.app.services.user_service import UserService
+from app.services.user_service import UserService
 
 router = APIRouter(tags=["Users"])
 
@@ -16,6 +16,6 @@ async def update_current_user(
     user_service: UserService = Depends(get_user_service)
 ):
     try:
-        return user_service.update_user(current_user.id, user_data)
+        return await user_service.update_user(current_user.id, user_data)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))

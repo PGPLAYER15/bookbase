@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
-from backend.app.models.review import Review
+from app.models.review import Review
 from app.schemas.review import ReviewCreate, ReviewUpdate
 
 class IReviewRepository(ABC):

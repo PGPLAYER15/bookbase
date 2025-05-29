@@ -1,71 +1,84 @@
 from typing import List, Optional
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, update, delete
 from sqlalchemy.exc import SQLAlchemyError
-from backend.app.models.user import User
+from app.models.user import User
 from app.schemas.user import UserCreate, UserUpdate, UserRead
-from backend.app.interfaces.Iuser_repository import UserRepository
+from app.interfaces.Iuser_repository import UserRepository
+from app.core.security import get_password_hash
 
 class RepoUser(UserRepository):
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
 
-    def create_user(self, user: UserCreate) -> User:
+    async def create_user(self, user: UserCreate) -> User:
         try:
-            if self.db.query(User).filter(User.email == user.email).first():
+            result = await self.db.execute(select(User).where(User.email == user.email))
+            if result.scalars().first():
                 raise ValueError("El email ya está registrado")
-
-            db_user = User(**user.dict())
+            
+            hashed_password = get_password_hash(user.password)
+            db_user = User(
+            username=user.username,
+            email=user.email,
+            hashed_password=hashed_password
+            )
             self.db.add(db_user)
-            self.db.commit()
-            self.db.refresh(db_user)
+            await self.db.commit()
+            await self.db.refresh(db_user)
             return db_user
         except SQLAlchemyError as e:
-            self.db.rollback()
+            await self.db.rollback()
             raise e
 
-    def get_user_by_id(self, user_id: int) -> Optional[User]:
+    async def get_user_by_id(self, user_id: int) -> Optional[User]:
         try:
-            return self.db.query(User).filter(User.id == user_id).first()
+            result = await self.db.execute(select(User).where(User.id == user_id))
+            return result.scalars().first()
         except SQLAlchemyError as e:
             raise e
 
-    def get_user_by_email(self, email: str) -> Optional[User]:
+    async def get_user_by_email(self, email: str) -> Optional[User]:
         try:
-            return self.db.query(User).filter(User.email == email).first()
+            result = await self.db.execute(select(User).where(User.email == email))
+            return result.scalars().first()
         except SQLAlchemyError as e:
             raise e
 
-    def get_users(self) -> List[User]:
+    async def get_users(self) -> List[User]:
         try:
-            return self.db.query(User).all()
+            result = await self.db.execute(select(User))
+            return result.scalars().all()
         except SQLAlchemyError as e:
             raise e
 
-    def update_user(self, user_id: int, user_update: UserUpdate) -> Optional[User]:
+    async def update_user(self, user_id: int, user_update: UserUpdate) -> Optional[User]:
         try:
-            db_user = self.db.query(User).filter(User.id == user_id).first()
+            result = await self.db.execute(select(User).where(User.id == user_id))
+            db_user = result.scalars().first()
             if not db_user:
                 return None
 
             for key, value in user_update.dict(exclude_unset=True).items():
                 setattr(db_user, key, value)
-            
-            self.db.commit()
-            self.db.refresh(db_user)
+
+            await self.db.commit()
+            await self.db.refresh(db_user)
             return db_user
         except SQLAlchemyError as e:
-            self.db.rollback()
+            await self.db.rollback()
             raise e
 
-    def delete_user(self, user_id: int) -> bool:
+    async def delete_user(self, user_id: int) -> bool:
         try:
-            db_user = self.db.query(User).filter(User.id == user_id).first()
+            result = await self.db.execute(select(User).where(User.id == user_id))
+            db_user = result.scalars().first()
             if not db_user:
                 return False
 
-            self.db.delete(db_user)
-            self.db.commit()
+            await self.db.delete(db_user)
+            await self.db.commit()
             return True
         except SQLAlchemyError as e:
-            self.db.rollback()
+            await self.db.rollback()
             raise e

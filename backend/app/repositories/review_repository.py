@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from typing import List, Optional
-from backend.app.models.review import Review
+from app.models.review import Review
 from app.schemas.review import ReviewCreate, ReviewUpdate
-from backend.app.interfaces.Ireview_repository import IReviewRepository
+from app.interfaces.Ireview_repository import IReviewRepository
 
 class ReviewRepository(IReviewRepository):
     def __init__(self, db: Session):

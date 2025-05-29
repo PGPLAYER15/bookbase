@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
-from backend.app.core.dependencies import get_book_service
+from app.core.dependencies import get_book_service
 from app.schemas.book import BookRead, BookCreate, BookUpdate
-from backend.app.services.book_service import BookService
+from app.services.book_service import BookService
 from typing import List
 
 router = APIRouter(tags=["Books"])

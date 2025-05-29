@@ -1,10 +1,10 @@
 from typing import List, Optional
-from app.models import Book
-from app.schemas import BookCreate, BookUpdate
-from app.repositories import BookRepository
+from app.models.book import Book
+from app.schemas.book import BookCreate, BookUpdate
+from app.repositories.book_repositor import RepoBook
 
 class BookService:
-    def __init__(self, book_repo: BookRepository):
+    def __init__(self, book_repo):
         self.book_repo = book_repo
 
     def create_book(self, book_data: BookCreate) -> Book:

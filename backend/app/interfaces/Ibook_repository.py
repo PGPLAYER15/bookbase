@@ -1,4 +1,4 @@
-from app.schemas.book import BookRead,BookCreate
+from app.schemas.book import BookRead,BookCreate , BookUpdate
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
@@ -19,7 +19,7 @@ class BookRepository(ABC):
         pass
 
     @abstractmethod
-    def update_book(self, book_id: int, book: BookCreate) -> Optional[BookRead]:
+    def update_book(self, book_id: int, book: BookUpdate) -> Optional[BookUpdate]:
         """Update an existing book."""
         pass
 

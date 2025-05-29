@@ -3,7 +3,7 @@ from app.api.v1 import (
     users
 )
 from app.api.v1 import books, likes, review
-from backend.app.api import auth
+from app.api import auth
 
 api_router = APIRouter()
 api_router.include_router(auth.router)

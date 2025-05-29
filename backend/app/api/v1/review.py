@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
-from backend.app.core.dependencies import CurrentUser, get_review_service
+from app.core.dependencies import CurrentUser, get_review_service
 from app.schemas.review import ReviewRead, ReviewCreate
 from typing import List
-from backend.app.services.review_service import ReviewService
+from app.services.review_service import ReviewService
 
 router = APIRouter(tags=["Reviews"])
 

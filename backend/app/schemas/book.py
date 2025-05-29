@@ -28,7 +28,7 @@ class BookUpdate(BaseModel):
     link: Optional[str] = None
     description: Optional[str] = None
     
-    @model_validator(model='after') 
+    @model_validator(mode="after")
     def check_at_least_one_field(cls, values):
         if all(v is None for v in values.model_dump().values()):
             raise ValueError("At least one field must be provided")

@@ -2,8 +2,8 @@ from sqlalchemy import Column, Integer, Text,DateTime, Float,ForeignKey
 from datetime import datetime 
 from sqlalchemy.orm import relationship
 from app.database import Base
-from backend.app.models.user import User
-from backend.app.models.book import Book
+from app.models.user import User
+from app.models.book import Book
 
 class Review(Base):
     __tablename__ = "reviews"

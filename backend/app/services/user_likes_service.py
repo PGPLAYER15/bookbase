@@ -1,9 +1,10 @@
 from typing import List, Optional
 from sqlalchemy.orm import Session
-from backend.app.repositories.user_likes_repository import LikeRepository
-from backend.app.repositories.user_repository import UserRepository
-from backend.app.repositories.book_repositor import BookRepository
-from app.models import User, Book
+from app.repositories.user_likes_repository import LikeRepository
+from app.repositories.user_repository import UserRepository
+from app.repositories.book_repositor import BookRepository
+from app.models.book import Book
+from app.models.user import User
 
 class LikeService:
     def __init__(

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
-from backend.app.core.dependencies import CurrentUser, get_like_service
-from backend.app.services.user_likes_service import LikeService
+from app.core.dependencies import CurrentUser, get_like_service
+from app.services.user_likes_service import LikeService
 
 router = APIRouter(tags=["Likes"])
 

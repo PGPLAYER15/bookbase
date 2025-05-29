@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from typing import List, Optional
-from backend.app.models.user_likes import user_likes
-from backend.app.interfaces.Iuser_likes_repository import ILikeRepository
+from app.models.user_likes import user_likes
+from app.interfaces.Iuser_likes_repository import ILikeRepository
 
 class LikeRepository(ILikeRepository):
     def __init__(self, db: Session):

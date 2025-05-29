@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String , Boolean
 from sqlalchemy.orm import relationship
 from app.database import Base
-from backend.app.models.user_likes import user_likes
+from app.models.user_likes import user_likes
 
 class User(Base):
     __tablename__ = "users"
@@ -16,5 +16,6 @@ class User(Base):
     liked_books = relationship(
         "Book",
         secondary=user_likes,
-        back_populates="liked_by_users"
+        back_populates="liked_by_users",
+        lazy="selectin"
     )
