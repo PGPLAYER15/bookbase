@@ -1,0 +1,86 @@
+body {
+    font-family: 'poppins', sans-serif;
+    background-image: url('../img/susan-q-yin-2JIvboGLeho-unsplash.jpg');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.login-container {
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: none;
+    width: 100%;
+    max-width: 400px;
+    backdrop-filter: blur(4px);
+    animation: fadeIn 1s ease-in;
+
+}
+
+@keyframes fadeIn {
+    form {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+.login-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.titulo-iniciar-sesion {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 1.5em;
+
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5em;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #2a7de1;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #195db6;
+}
