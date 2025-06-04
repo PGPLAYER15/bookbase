@@ -12,7 +12,7 @@ async def create_book(
     book_service: BookService = Depends(get_book_service)
 ):
     try:
-        return book_service.create_book(book_data)
+        return await book_service.create_book(book_data)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -22,4 +22,4 @@ async def list_books(
     limit: int = 10,
     book_service: BookService = Depends(get_book_service)
 ):
-    return book_service.get_all_books(skip=skip, limit=limit)
+    return await book_service.get_all_books(skip=skip, limit=limit)

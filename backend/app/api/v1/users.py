@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
-from app.core.dependencies import CurrentUser, get_user_service
+from app.core.dependencies import CurrentUser, get_user_service, get_current_user
 from app.schemas.user import UserRead, UserUpdate
 from app.services.user_service import UserService
 
 router = APIRouter(tags=["Users"])
 
 @router.get("/users/me", response_model=UserRead)
-async def read_current_user(current_user: CurrentUser):
+async def read_current_user(current_user: UserRead = Depends(get_current_user)):
     return current_user
 
 @router.patch("/users/me", response_model=UserRead)

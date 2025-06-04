@@ -1,70 +1,100 @@
 from typing import List, Optional
-from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.future import select
 from app.models.book import Book
 from app.schemas.book import BookCreate, BookUpdate, BookRead
 from app.interfaces.Ibook_repository import BookRepository
 
 class RepoBook(BookRepository):
-    def __init__(self, db: Session):
+    def __init__(self, db):
         self.db = db
 
-    def create_book(self, book: BookCreate) -> BookRead:
+    async def create_book(self, book: BookCreate) -> BookRead:
         try:
-            if self.db.query(Book).filter(Book.title == book.title).first():
+            result = await self.db.execute(
+                select(Book).where(Book.title == book.title)
+            )
+            if result.scalars().first():
                 raise ValueError("El título ya existe")
 
-            db_book = Book(**book.dict())
+            book_dict = book.dict()
+            book_dict["link"] = str(book_dict["link"])  # <-- Convierte HttpUrl a str
+
+            db_book = Book(**book_dict)
             self.db.add(db_book)
-            self.db.commit()
-            self.db.refresh(db_book)
+            await self.db.commit()
+            await self.db.refresh(db_book)
             return BookRead.from_orm(db_book)
         except SQLAlchemyError as e:
-            self.db.rollback()
+            await self.db.rollback()
             print(f"Error creando un libro: {e}")
             raise e
 
-    def get_book_by_id(self, book_id: int) -> Optional[BookRead]:
+    async def get_book_by_id(self, book_id: int) -> Optional[BookRead]:
         try:
-            db_book = self.db.query(Book).filter(Book.id == book_id).first()
+            result = await self.db.execute(
+                select(Book).where(Book.id == book_id)
+            )
+            db_book = result.scalars().first()
             if db_book:
                 return BookRead.from_orm(db_book)
             return None
         except SQLAlchemyError as e:
             raise e
 
-    def get_all_books(self) -> List[BookRead]:
+    async def get_all_books(self, skip: int = 0, limit: int = 10) -> List[BookRead]:
         try:
-            books = self.db.query(Book).all()
+            result = await self.db.execute(
+                select(Book).offset(skip).limit(limit)
+            )
+            books = result.scalars().all()
             return [BookRead.from_orm(book) for book in books]
         except SQLAlchemyError as e:
             raise e
 
-    def update_book(self, book_id: int, book_update: BookUpdate) -> Optional[BookRead]:
+    async def get_book_by_title(self, title: str) -> Optional[BookRead]:
         try:
-            db_book = self.db.query(Book).filter(Book.id == book_id).first()
+            result = await self.db.execute(
+                select(Book).where(Book.title == title)
+            )
+            db_book = result.scalars().first()
+            if db_book:
+                return BookRead.from_orm(db_book)
+            return None
+        except SQLAlchemyError as e:
+            raise e
+
+    async def update_book(self, book_id: int, book_update: BookUpdate) -> Optional[BookRead]:
+        try:
+            result = await self.db.execute(
+                select(Book).where(Book.id == book_id)
+            )
+            db_book = result.scalars().first()
             if not db_book:
                 return None
 
             for key, value in book_update.dict(exclude_unset=True).items():
                 setattr(db_book, key, value)
-            
-            self.db.commit()
-            self.db.refresh(db_book)
+
+            await self.db.commit()
+            await self.db.refresh(db_book)
             return BookRead.from_orm(db_book)
         except SQLAlchemyError as e:
-            self.db.rollback()
+            await self.db.rollback()
             raise e
 
-    def delete_book(self, book_id: int) -> bool:
+    async def delete_book(self, book_id: int) -> bool:
         try:
-            db_book = self.db.query(Book).filter(Book.id == book_id).first()
+            result = await self.db.execute(
+                select(Book).where(Book.id == book_id)
+            )
+            db_book = result.scalars().first()
             if not db_book:
                 return False
 
-            self.db.delete(db_book)
-            self.db.commit()
+            await self.db.delete(db_book)
+            await self.db.commit()
             return True
         except SQLAlchemyError as e:
-            self.db.rollback()
+            await self.db.rollback()
             raise e

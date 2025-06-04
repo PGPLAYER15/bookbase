@@ -1,8 +1,15 @@
-from fastapi import Depends
+from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.database import AsyncSessionLocal
 from app.services.book_service import BookService
-from app.services import book_service, review_service, user_service
+from app.repositories.book_repositor import RepoBook
+from app.services.review_service import ReviewService
+from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError, jwt
+from app.services.user_service import UserService
+from app.core.config import settings
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 async def get_db():
 
@@ -45,29 +52,40 @@ def get_user_service(
     return user_service(user_repo)
 
 def get_book_service(db: Session = Depends(get_db)) -> BookService:
-    return book_service(RepoBook(db))
+    return BookService(RepoBook(db))
 
 def get_review_service(
     review_repo: ReviewRepository = Depends(get_review_repository),
     book_repo: RepoBook = Depends(get_book_repository),
     user_repo: RepoUser = Depends(get_user_repository)
-) -> review_service:
-    return review_service(review_repo, book_repo, user_repo)
+) -> ReviewService:
+    return ReviewService(review_repo, book_repo, user_repo)
 
 
-from typing import Annotated
-from fastapi.security import OAuth2PasswordBearer
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
-
-def get_current_user(
+async def get_current_user(
     token: str = Depends(oauth2_scheme),
-    user_service: user_service = Depends(get_user_service)
+    user_service: UserService = Depends(get_user_service)
 ):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="No autenticado",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        user_id: str = payload.get("sub")
+        if user_id is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
 
-    pass
+    user = await user_service.get_user_by_id(int(user_id))
+    if user is None:
+        raise credentials_exception
+    return user
 
 from app.models.user import User
+from typing import Annotated
 
 DatabaseSession = Annotated[Session, Depends(get_db)]
 CurrentUser = Annotated[User, Depends(get_current_user)]
