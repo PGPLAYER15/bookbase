@@ -1,0 +1,171 @@
+/* Estilos específicos para la página de favoritos */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family:
+        "Segoe UI",
+        system-ui,
+        -apple-system,
+        sans-serif;
+    background: linear-gradient(135deg, #fdf6ef 0%, #f5e9dc 100%);
+    transition: background 0.3s, color 0.3s;
+    min-height: 100vh;
+    color: #3e2723;
+}
+
+body.dark-mode {
+    background: linear-gradient(135deg, #3b2f2f 0%, #2e1f1f 100%);
+    color: #fcebd3;
+    min-height: 100vh;
+
+}
+
+#favoritesGrid {
+    min-height: 60vh;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    animation: fadeInUp 1s ease-out 0.8s both;
+}
+
+.empty-favorites {
+    text-align: center;
+    padding: 3rem;
+    background: rgba(255, 248, 240, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    margin: 2rem auto;
+    max-width: 600px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.empty-favorites h2 {
+    color: #4e342e;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.empty-favorites p {
+    color: #8d6e63;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.empty-favorites .btn {
+    display: inline-block;
+    padding: 0.8rem 2rem;
+    background: #5d4037;
+    color: #fffaf0;
+    text-decoration: none;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+}
+
+.empty-favorites .btn:hover {
+    background: #4e342e;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos para el botón de inicio */
+.likesToggle {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1000;
+    background-color: #5d4037;
+    color: #fffaf0;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: background 0.3s, transform 0.2s;
+}
+
+.likesToggle:hover {
+    background-color: #4e342e;
+    transform: scale(1.1);
+}
+
+.dark-mode-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+    background-color: #5d4037;
+    color: #fffaf0;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: background 0.3s, transform 0.2s;
+}
+
+.dark-mode-toggle:hover {
+    background-color: #4e342e;
+    transform: scale(1.1);
+}
+
+header.dark-mode{
+
+    color:#fcebd3
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 3rem;
+    color: #4e342e;
+}
+
+.header h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    animation: fadeInUp 1s ease-out;
+}
+
+.header p {
+    font-size: 1.2rem;
+    opacity: 0.85;
+    animation: fadeInUp 1s ease-out 0.2s both;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    #favoritesGrid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .empty-favorites {
+        margin: 1rem;
+        padding: 2rem;
+    }
+
+    .empty-favorites h2 {
+        font-size: 1.5rem;
+    }
+
+    .empty-favorites p {
+        font-size: 1rem;
+    }
+}

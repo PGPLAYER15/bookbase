@@ -1,177 +1,184 @@
-// Datos de ejemplo de libros (normalmente vendrían de tu backend Python)
-const books = [
-  {
-    id: 1,
-    title: "Cien años de soledad",
-    author: "Gabriel García Márquez",
-    publisher: "Editorial Sudamericana",
-    year: "1967",
-    edition: "Primera edición",
-    pages: "471",
-    isbn: "978-84-376-0494-7",
-    category: "ficcion",
-    available: true,
-  },
-  {
-    id: 2,
-    title: "Sapiens: De animales a dioses",
-    author: "Yuval Noah Harari",
-    publisher: "Editorial Debate",
-    year: "2014",
-    edition: "Segunda edición",
-    pages: "496",
-    isbn: "978-84-9992-552-1",
-    category: "historia",
-    available: true,
-  },
-  {
-    id: 3,
-    title: "El arte de la programación",
-    author: "Donald E. Knuth",
-    publisher: "Addison-Wesley",
-    year: "1968",
-    edition: "Cuarta edición",
-    pages: "652",
-    isbn: "978-0-201-89683-1",
-    category: "tecnologia",
-    available: false,
-  },
-  {
-    id: 4,
-    title: "Breve historia del tiempo",
-    author: "Stephen Hawking",
-    publisher: "Bantam Books",
-    year: "1988",
-    edition: "Edición ilustrada",
-    pages: "256",
-    isbn: "978-84-08-06095-3",
-    category: "ciencia",
-    available: true,
-  },
-  {
-    id: 5,
-    title: "Historia del arte",
-    author: "Ernst Gombrich",
-    publisher: "Phaidon Press",
-    year: "1950",
-    edition: "16ª edición",
-    pages: "688",
-    isbn: "978-0-7148-3355-2",
-    category: "arte",
-    available: true,
-  },
-  {
-    id: 6,
-    title: "1984",
-    author: "George Orwell",
-    publisher: "Secker & Warburg",
-    year: "1949",
-    edition: "Edición conmemorativa",
-    pages: "328",
-    isbn: "978-84-376-0523-4",
-    category: "ficcion",
-    available: true,
-  },
-];
+const API_URL = 'http://localhost:8000/api/v1';
 
-let filteredBooks = [...books];
+const booksGrid = document.getElementById('booksGrid');
+const searchInput = document.getElementById('searchInput');
+const filterButtons = document.querySelectorAll('.filter-btn');
+const darkModeToggle = document.getElementById('darkModeToggle');
 
-function renderBooks(booksToRender) {
-  const grid = document.getElementById("booksGrid");
-  grid.innerHTML = "";
+let currentFilter = 'all';
+let currentSearch = '';
+let books = [];
+let currentPage = 0;
+const booksPerPage = 12;
+let isLoading = false;
+let hasMoreBooks = true;
 
-  booksToRender.forEach((book) => {
-    const bookCard = document.createElement("div");
-    bookCard.className = "book-card";
-    bookCard.innerHTML = `
-                    <div class="book-cover">
-                        <img src="${book.cover}" alt="${book.title}">
-                        <div class="availability-badge ${
-                          book.available ? "" : "unavailable"
-                        }">
-                            ${book.available ? "Disponible" : "No disponible"}
-                        </div>
-                    </div>
-                    <div class="book-info">
-                        <h3 class="book-title">${book.title}</h3>
-                        <p class="book-author">por ${book.author}</p>
-                        <div class="book-details">
-                            <div class="detail-row">
-                                <span class="detail-label">Editorial:</span>
-                                <span class="detail-value">${
-                                  book.publisher
-                                }</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Año:</span>
-                                <span class="detail-value">${book.year}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Edición:</span>
-                                <span class="detail-value">${
-                                  book.edition
-                                }</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Páginas:</span>
-                                <span class="detail-value">${book.pages}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">ISBN:</span>
-                                <span class="detail-value">${book.isbn}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="book-actions">
-                        <button class="btn btn-primary" ${
-                          !book.available ? "disabled" : ""
-                        }>
-                            ${book.available ? "Leer ahora" : "No disponible"}
-                        </button>
-                        <button class="btn btn-secondary">Ver detalles</button>
-                    </div>
-                `;
-    grid.appendChild(bookCard);
-  });
+// Función para verificar si el usuario está autenticado
+function isAuthenticated() {
+    return localStorage.getItem('token') !== null;
 }
 
-// Filtros
-document.querySelectorAll(".filter-btn").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    document
-      .querySelectorAll(".filter-btn")
-      .forEach((b) => b.classList.remove("active"));
-    btn.classList.add("active");
-
-    const filter = btn.dataset.filter;
-    if (filter === "all") {
-      filteredBooks = [...books];
-    } else {
-      filteredBooks = books.filter((book) => book.category === filter);
+// Función para redirigir al login si no está autenticado
+function redirectToLogin() {
+    if (!isAuthenticated()) {
+        window.location.href = 'login.html';
     }
-    renderBooks(filteredBooks);
-  });
+}
+
+// Función para obtener el token
+function getToken() {
+    return localStorage.getItem('token');
+}
+
+// Función para cerrar sesión
+function logout() {
+    localStorage.removeItem('token');
+    window.location.href = 'login.html';
+}
+
+async function fetchBooks(reset = false) {
+    if (isLoading || (!hasMoreBooks && !reset)) return;
+    
+    try {
+        isLoading = true;
+        if (reset) {
+            currentPage = 0;
+            books = [];
+            hasMoreBooks = true;
+        }
+
+        const skip = currentPage * booksPerPage;
+        let url = `${API_URL}/books?skip=${skip}&limit=${booksPerPage}`;
+
+        if (currentFilter !== 'all') {
+            url += `&category=${currentFilter}`;
+        }
+
+        if (currentSearch.length > 0) {
+            url += `&search=${encodeURIComponent(currentSearch)}`;
+        }
+
+        const headers = {
+            'Authorization': `Bearer ${getToken()}`
+        };
+
+        const response = await fetch(url, { headers });
+        if (!response.ok) {
+            if (response.status === 401) {
+                redirectToLogin();
+                return;
+            }
+            throw new Error('Error al obtener los libros');
+        }
+
+        const newBooks = await response.json();
+        if (newBooks.length < booksPerPage) {
+            hasMoreBooks = false;
+        }
+
+        books = reset ? newBooks : [...books, ...newBooks];
+        currentPage++;
+
+        renderBooks();
+    } catch (error) {
+        console.error('Error:', error);
+        showError('Error al cargar los libros. Por favor, intenta de nuevo.');
+    } finally {
+        isLoading = false;
+    }
+}
+
+function renderBooks() {
+    const filteredBooks = books.filter(book => {
+        const matchesFilter = currentFilter === 'all' || book.category === currentFilter;
+        const matchesSearch = book.title.toLowerCase().includes(currentSearch.toLowerCase()) ||
+                            book.author.toLowerCase().includes(currentSearch.toLowerCase()) ||
+                            book.description.toLowerCase().includes(currentSearch.toLowerCase());
+        return matchesFilter && matchesSearch;
+    });
+
+    if (filteredBooks.length === 0) {
+        booksGrid.innerHTML = '<div class="no-books">No se encontraron libros</div>';
+        return;
+    }
+
+    booksGrid.innerHTML = filteredBooks.map(book => `
+        <div class="book-card">
+            <img src="${book.link}" alt="${book.title}" onerror="this.src='../assets/img/default-book.jpg'">
+            <div class="book-card-content">
+                <h3>${book.title}</h3>
+                <p class="author">${book.author}</p>
+                <p class="description">${book.description || 'Sin descripción'}</p>
+                <p class="category">${book.category || 'Sin categoría'}</p>
+                <p class="date">${new Date(book.created_at).toLocaleDateString()}</p>
+            </div>
+            <div class="book-actions">
+                <button class="btn btn-primary" onclick="likeBook(${book.id})">❤️ </button>
+                <button class="btn btn-secondary" onclick="viewDetails(${book.id})">Ver detalles</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function handleSearch() {
+    const searchTerm = searchInput.value.trim();
+    if (searchTerm.length >= 2 || searchTerm.length === 0) {
+        currentSearch = searchTerm;
+        fetchBooks(true);
+    }
+}
+
+function handleFilter(filter) {
+    currentFilter = filter;
+    filterButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === filter);
+    });
+    fetchBooks(true);
+}
+
+function showError(message) {
+    booksGrid.innerHTML = `<div class="error">${message}</div>`;
+}
+
+function handleScroll() {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000) {
+        fetchBooks();
+    }
+}
+
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    localStorage.setItem('darkMode', isDarkMode);
+    darkModeToggle.textContent = isDarkMode ? '☀️' : '🌙';
+}
+
+searchInput.addEventListener('input', debounce(handleSearch, 500));
+filterButtons.forEach(btn => {
+    btn.addEventListener('click', () => handleFilter(btn.dataset.filter));
 });
+window.addEventListener('scroll', handleScroll);
 
-// Búsqueda
-document.getElementById("searchInput").addEventListener("input", (e) => {
-  const searchTerm = e.target.value.toLowerCase();
-  const activeFilter =
-    document.querySelector(".filter-btn.active").dataset.filter;
+const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+if (savedDarkMode) {
+    document.body.classList.add('dark-mode');
+    darkModeToggle.textContent = '☀️';
+}
+darkModeToggle.addEventListener('click', toggleDarkMode);
 
-  let booksToFilter =
-    activeFilter === "all"
-      ? books
-      : books.filter((book) => book.category === activeFilter);
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
 
-  filteredBooks = booksToFilter.filter(
-    (book) =>
-      book.title.toLowerCase().includes(searchTerm) ||
-      book.author.toLowerCase().includes(searchTerm)
-  );
-
-  renderBooks(filteredBooks);
+document.addEventListener('DOMContentLoaded', () => {
+    redirectToLogin();
+    fetchBooks();
 });
-
-// Renderizar libros iniciales
-renderBooks(books);

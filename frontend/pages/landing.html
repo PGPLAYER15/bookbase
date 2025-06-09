@@ -3,39 +3,43 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Biblioteca Digital</title>
+        <title>BookBase</title>
         <link rel="stylesheet" href="../assets/css/landing.css" />
     </head>
     <body>
         <div class="container">
-        <header class="header">
-            <h1>BookBase</h1>
-            <p>Cultura al alcance de un click</p>
-        </header>
- 
-        <div class="search-bar">
-            <span class="search-icon"></span>
-            <input
-            type="text"
-            placeholder="Buscar por título, autor o tema..."
-            id="searchInput"
-            />
+            <header class="header">
+                <h1>BookBase</h1>
+                <p>Cultura al alcance de un click</p>
+            </header>
+    
+            <div class="search-bar">
+                <span class="search-icon"></span>
+                <input
+                type="text"
+                placeholder="Buscar por título, autor o tema..."
+                id="searchInput"
+                />
+            </div>
+
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">Todos</button>
+                <button class="filter-btn" data-filter="Ficción">Ficción</button>
+                <button class="filter-btn" data-filter="Ciencia">Ciencia</button>
+                <button class="filter-btn" data-filter="Historia">Historia</button>
+                <button class="filter-btn" data-filter="Arte">Arte</button>
+                <button class="filter-btn" data-filter="Tecnología">Tecnología</button>
+            </div>
+
+            <div class="books-grid" id="booksGrid">
+            </div>
         </div>
 
-        <div class="filters">
-            <button class="filter-btn active" data-filter="all">Todos</button>
-            <button class="filter-btn" data-filter="ficcion">Ficción</button>
-            <button class="filter-btn" data-filter="ciencia">Ciencia</button>
-            <button class="filter-btn" data-filter="historia">Historia</button>
-            <button class="filter-btn" data-filter="arte">Arte</button>
-            <button class="filter-btn" data-filter="tecnologia">Tecnología</button>
-        </div>
-
-        <div class="books-grid" id="booksGrid">
-            <!-- Los libros se cargarán aquí -->
-        </div>
-        </div>
-
+        <a href="favoritos.html">
+            <button class="likesToggle">❤️</button>
+        </a>
+        <button id="darkModeToggle" class="dark-mode-toggle">��</button>
+        <button onclick="logout()" class="logout-button">Cerrar Sesión</button>
         <script src="../assets/js/landing.js"></script>
     </body>
 </html>
