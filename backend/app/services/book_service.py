@@ -16,8 +16,14 @@ class BookService:
     async def get_book(self, book_id: int) -> Optional[Book]:
         return await self.book_repo.get_book_by_id(book_id)
 
-    async def get_all_books(self,skip: int = 0, limit: int = 10) -> List[Book]:
-        return await self.book_repo.get_all_books()
+    async def get_all_books(self, skip: int = 0, limit: int = 10) -> List[Book]:
+        return await self.book_repo.get_all_books(skip, limit)
+
+    async def get_books_by_category(self, category: str, skip: int = 0, limit: int = 10) -> List[Book]:
+        return await self.book_repo.get_books_by_category(category, skip, limit)
+
+    async def search_books(self, search_term: str, skip: int = 0, limit: int = 10) -> List[Book]:
+        return await self.book_repo.search_books(search_term, skip, limit)
 
     async def update_book(self, book_id: int, book_data: BookUpdate) -> Optional[Book]:
         return await self.book_repo.update_book(book_id, book_data)
