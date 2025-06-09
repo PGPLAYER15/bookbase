@@ -13,24 +13,20 @@ const booksPerPage = 12;
 let isLoading = false;
 let hasMoreBooks = true;
 
-// Función para verificar si el usuario está autenticado
 function isAuthenticated() {
     return localStorage.getItem('token') !== null;
 }
 
-// Función para redirigir al login si no está autenticado
 function redirectToLogin() {
     if (!isAuthenticated()) {
         window.location.href = 'login.html';
     }
 }
 
-// Función para obtener el token
 function getToken() {
     return localStorage.getItem('token');
 }
 
-// Función para cerrar sesión
 function logout() {
     localStorage.removeItem('token');
     window.location.href = 'login.html';
