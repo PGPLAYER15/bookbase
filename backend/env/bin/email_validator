@@ -1,4 +1,6 @@
-#!/Users/viny.tito/Documents/PROYECTOS/bookbase/backend/env/bin/python3.12
+#!/bin/sh
+'''exec' "/Users/thug/Documents/Escuela/4to Semestre/Programacion Web/Parcial 3/bookbase/backend/env/bin/python3.13" "$0" "$@"
+' '''
 # -*- coding: utf-8 -*-
 import re
 import sys
