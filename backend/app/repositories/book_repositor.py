@@ -57,13 +57,8 @@ class RepoBook(BookRepository):
 
     async def get_books_by_category(self, category: str, skip: int = 0, limit: int = 10) -> List[Book]:
         try:
-            result = await self.db.execute(
-                select(Book)
-                .filter(Book.category == category)
-                .order_by(Book.created_at.desc())
-                .offset(skip)
-                .limit(limit)
-            )
+            stmt = select(Book).where(Book.category == category).offset(skip).limit(limit)
+            result = await self.db.execute(stmt)
             return result.scalars().all()
         except Exception as e:
             await self.db.rollback()

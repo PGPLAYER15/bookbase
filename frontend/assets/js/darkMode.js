@@ -3,7 +3,9 @@ function initializeDarkMode() {
     const body = document.body;
     const header = document.querySelector(".header");
 
-    if (localStorage.getItem("theme") === "dark") {
+    // Verificar el tema guardado
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
         body.classList.add("dark-mode");
         if (header) header.classList.add("dark-mode");
         toggleButton.textContent = "☀️";

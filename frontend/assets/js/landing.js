@@ -1,3 +1,5 @@
+import { fetchUserLikes, updateLikeButtons ,likeBook, unlikeBook,likedBooks} from './likes.js';
+
 const API_URL = 'http://localhost:8000/api/v1';
 
 const booksGrid = document.getElementById('booksGrid');
@@ -27,10 +29,13 @@ function getToken() {
     return localStorage.getItem('token');
 }
 
-function logout() {
+export function logout() {
     localStorage.removeItem('token');
     window.location.href = 'login.html';
 }
+
+// Make logout function globally available
+window.logout = logout;
 
 async function fetchBooks(reset = false) {
     if (isLoading || (!hasMoreBooks && !reset)) return;
@@ -86,11 +91,10 @@ async function fetchBooks(reset = false) {
 
 function renderBooks() {
     const filteredBooks = books.filter(book => {
-        const matchesFilter = currentFilter === 'all' || book.category === currentFilter;
         const matchesSearch = book.title.toLowerCase().includes(currentSearch.toLowerCase()) ||
-                            book.author.toLowerCase().includes(currentSearch.toLowerCase()) ||
-                            book.description.toLowerCase().includes(currentSearch.toLowerCase());
-        return matchesFilter && matchesSearch;
+                              book.author.toLowerCase().includes(currentSearch.toLowerCase()) ||
+                              book.description.toLowerCase().includes(currentSearch.toLowerCase());
+        return matchesSearch;
     });
 
     if (filteredBooks.length === 0) {
@@ -100,7 +104,7 @@ function renderBooks() {
 
     booksGrid.innerHTML = filteredBooks.map(book => `
         <div class="book-card">
-            <img src="${book.link}" alt="${book.title}" onerror="this.src='../assets/img/default-book.jpg'">
+            <img src="${book.link}" alt="${book.title}" onerror="this.src='../assets/img/no-image.png'">
             <div class="book-card-content">
                 <h3>${book.title}</h3>
                 <p class="author">${book.author}</p>
@@ -109,11 +113,26 @@ function renderBooks() {
                 <p class="date">${new Date(book.created_at).toLocaleDateString()}</p>
             </div>
             <div class="book-actions">
-                <button class="btn btn-primary" onclick="likeBook(${book.id})">❤️ </button>
+                <button class="like-button" data-book-id="${book.id}">🤍</button>
                 <button class="btn btn-secondary" onclick="viewDetails(${book.id})">Ver detalles</button>
             </div>
         </div>
     `).join('');
+
+    document.querySelectorAll('.like-button').forEach(button => {
+        button.addEventListener('click', async () => {
+            const bookId = parseInt(button.dataset.bookId);
+    
+            if (likedBooks.has(bookId)) {
+                console.log('Este libro ya tiene like.');
+                unlikeBook(bookId);
+                likedBooks.delete(bookId);
+                return; 
+            }
+            likeBook(bookId);
+            likedBooks.add(bookId);
+        });
+    });
 }
 
 function handleSearch() {

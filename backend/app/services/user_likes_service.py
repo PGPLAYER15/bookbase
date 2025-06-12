@@ -17,21 +17,22 @@ class LikeService:
         self.user_repo = user_repo
         self.book_repo = book_repo
 
-    def add_like(self, user_id: int, book_id: int) -> bool:
-
-        if not self.user_repo.get_user_by_id(user_id):
+    async def add_like(self, user_id: int, book_id: int) -> bool:
+        user = await self.user_repo.get_user_by_id(user_id)
+        if not user:
             raise ValueError("Usuario no encontrado")
-        if not self.book_repo.get_book_by_id(book_id):
+        
+        book = await self.book_repo.get_book_by_id(book_id)
+        if not book:
             raise ValueError("Libro no encontrado")
 
-        return self.like_repo.add_like(user_id, book_id)
+        return await self.like_repo.add_like(user_id, book_id)
 
-    def remove_like(self, user_id: int, book_id: int) -> bool:
-        return self.like_repo.remove_like(user_id, book_id)
+    async def remove_like(self, user_id: int, book_id: int) -> bool:
+        return await self.like_repo.remove_like(user_id, book_id)
 
-    def get_user_likes(self, user_id: int) -> List[Book]:
-        book_ids = self.like_repo.get_user_likes(user_id)
-        return [self.book_repo.get_book_by_id(book_id) for book_id in book_ids]
+    async def get_user_likes(self, user_id: int) -> List[int]:
+        return await self.like_repo.get_user_likes(user_id)
 
-    def count_likes_for_book(self, book_id: int) -> int:
-        return self.like_repo.count_likes_for_book(book_id)
+    async def count_likes_for_book(self, book_id: int) -> int:
+        return await self.like_repo.count_likes_for_book(book_id)

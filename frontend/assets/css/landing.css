@@ -1,4 +1,24 @@
+:root {
+    --text-color: #3e2723;
+    --background-color: #fdf6ef;
+    --background-color-secondary: #f5e9dc;
+    --card-background: rgba(255, 248, 240, 0.95);
+    --card-border: rgba(255, 255, 255, 0.4);
+    --shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    --hover-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    --gradient: linear-gradient(135deg, #4e342e 0%, #6d4c41 100%);
+    --transition: all 0.3s ease;
+}
 
+body.dark-mode {
+    --text-color: #fcebd3;
+    --background-color: #3b2f2f;
+    --background-color-secondary: #2e1f1f;
+    --card-background: rgba(59, 47, 47, 0.95);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    --hover-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+}
 
 * {
     margin: 0;
@@ -10,16 +30,14 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    background: linear-gradient(135deg, #fdf6ef 0%, #f5e9dc 100%);
+    background: linear-gradient(135deg, var(--background-color) 0%, var(--background-color-secondary) 100%);
     color: var(--text-color);
     transition: var(--transition);
     min-height: 100vh;
 }
 
 body.dark-mode {
-    background: linear-gradient(135deg, #3b2f2f 0%, #2e1f1f 100%);
-    color: #fcebd3;
-    min-height: 100vh;
+    background: linear-gradient(135deg, var(--background-color) 0%, var(--background-color-secondary) 100%);
 }
 
 .likesToggle {
@@ -36,8 +54,8 @@ body.dark-mode {
     height: 40px;
     font-size: 1.2rem;
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    transition: background 0.3s, transform 0.2s;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
 }
 
 .likesToggle:hover {
@@ -58,8 +76,8 @@ body.dark-mode {
     height: 40px;
     font-size: 1.2rem;
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    transition: background 0.3s, transform 0.2s;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
 }
 
 .dark-mode-toggle:hover {
@@ -68,7 +86,7 @@ body.dark-mode {
 }
 
 header.dark-mode {
-    color: #fcebd3;
+    color: var(--text-color);
 }
 
 .container {
@@ -80,7 +98,7 @@ header.dark-mode {
 .header {
     text-align: center;
     margin-bottom: 3rem;
-    color: #4e342e;
+    color: var(--text-color);
 }
 
 .header h1 {
@@ -98,7 +116,7 @@ header.dark-mode {
 }
 
 .search-bar {
-    background: rgba(255, 255, 255, 0.6);
+    background: var(--card-background);
     backdrop-filter: blur(20px);
     border-radius: 25px;
     padding: 1rem 2rem;
@@ -106,7 +124,7 @@ header.dark-mode {
     display: flex;
     align-items: center;
     gap: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    border: 1px solid var(--card-border);
     animation: fadeInUp 1s ease-out 0.4s both;
 }
 
@@ -115,16 +133,18 @@ header.dark-mode {
     background: none;
     border: none;
     outline: none;
-    color: #4e342e;
+    color: var(--text-color);
     font-size: 1.1rem;
 }
 
 .search-bar input::placeholder {
-    color: rgba(78, 52, 46, 0.6);
+    color: var(--text-color);
+    opacity: 0.6;
 }
 
 .search-icon {
-    color: rgba(78, 52, 46, 0.8);
+    color: var(--text-color);
+    opacity: 0.8;
     font-size: 1.2rem;
 }
 
@@ -138,14 +158,14 @@ header.dark-mode {
 }
 
 .filter-btn {
-    background: rgba(255, 255, 255, 0.7);
+    background: var(--card-background);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    color: #4e342e;
+    border: 1px solid var(--card-border);
+    color: var(--text-color);
     padding: 0.8rem 1.5rem;
     border-radius: 25px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: var(--transition);
     font-size: 0.9rem;
     font-weight: 500;
 }
@@ -154,7 +174,7 @@ header.dark-mode {
 .filter-btn.active {
     background: rgba(212, 165, 93, 0.3);
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px #00000033;
+    box-shadow: var(--hover-shadow);
 }
 
 .books-grid {
@@ -167,7 +187,7 @@ header.dark-mode {
 }
 
 .book-card {
-    background: var(--card-gradient);
+    background: var(--card-background);
     border-radius: 16px;
     overflow: hidden;
     box-shadow: var(--shadow);
@@ -176,7 +196,7 @@ header.dark-mode {
     display: flex;
     flex-direction: column;
     height: 100%;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--card-border);
 }
 
 .book-card:hover {
@@ -233,7 +253,8 @@ header.dark-mode {
 
 .book-card .author {
     font-weight: 600;
-    color: var(--secondary-color);
+    color: var(--text-color);
+    opacity: 0.8;
     font-size: 1.1rem;
     margin: 0;
 }
@@ -285,24 +306,24 @@ header.dark-mode {
     border-radius: 12px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: var(--transition);
     font-size: 0.9rem;
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #4e342e 0%, #6d4c41 100%);
+    background: var(--gradient);
     color: white;
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(78, 52, 46, 0.3);
+    box-shadow: var(--hover-shadow);
 }
 
 .btn-secondary {
     background: rgba(78, 52, 46, 0.05);
-    color: #4e342e;
-    border: 1px solid rgba(78, 52, 46, 0.2);
+    color: var(--text-color);
+    border: 1px solid var(--card-border);
 }
 
 .btn-secondary:hover {
@@ -431,11 +452,56 @@ header.dark-mode {
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    transition: background 0.3s, transform 0.2s;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
 }
 
 .logout-button:hover {
     background-color: #4e342e;
     transform: scale(1.05);
+}
+
+.like-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: var(--transition);
+    padding: 0.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.like-button:hover {
+    transform: scale(1.2);
+}
+
+.like-button.liked {
+    color: #e91e63;
+}
+
+.error-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #f44336;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    z-index: 1000;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }

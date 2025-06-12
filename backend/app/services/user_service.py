@@ -18,6 +18,9 @@ class UserService:
     async def get_user(self, user_id: int) -> Optional[User]:
         return await self.user_repo.get_user_by_id(user_id)
 
+    async def get_user_by_id(self, user_id: int) -> Optional[User]:
+        return await self.user_repo.get_user_by_id(user_id)
+
     async def get_user_by_email(self, email: str) -> Optional[User]:
         return await self.user_repo.get_user_by_email(email)
 

@@ -3,6 +3,7 @@ from app.core.dependencies import get_book_service
 from app.schemas.book import BookRead, BookCreate, BookUpdate
 from app.services.book_service import BookService
 from typing import List, Optional
+from urllib.parse import unquote
 
 router = APIRouter(tags=["Books"])
 
@@ -20,14 +21,25 @@ async def create_book(
 async def list_books(
     skip: int = Query(0, ge=0),
     limit: int = Query(10, ge=1, le=100),
-    category: Optional[str] = None,
-    search: Optional[str] = None,
+    category: Optional[str] = Query(None),
+    search: Optional[str] = Query(None),
     book_service: BookService = Depends(get_book_service)
 ):
     if category:
-        return await book_service.get_books_by_category(category, skip, limit)
+        category = unquote(category)
+    
+    print(f"Received request - Category: {category}, Search: {search}, Skip: {skip}, Limit: {limit}")
+    
+    if category:
+        print(f"Filtering by category: {category}")
+        books = await book_service.get_books_by_category(category, skip, limit)
+        print(f"Found {len(books)} books in category {category}")
+        return books
     elif search:
+        print(f"Searching for: {search}")
         return await book_service.search_books(search, skip, limit)
+    
+    print("Getting all books")
     return await book_service.get_all_books(skip, limit)
 
 @router.get("/books/{book_id}", response_model=BookRead)
