@@ -29,11 +29,7 @@ body.dark-mode {
 }
 
 body {
-    font-family:
-        "Segoe UI",
-        system-ui,
-        -apple-system,
-        sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, var(--background-color) 0%, var(--background-color-secondary) 100%);
     transition: var(--transition);
     min-height: 100vh;
@@ -97,7 +93,6 @@ body.dark-mode {
     box-shadow: var(--hover-shadow);
 }
 
-/* Estilos para el botón de inicio */
 .likesToggle {
     position: fixed;
     top: 1rem;
@@ -168,11 +163,9 @@ header.dark-mode{
 }
 
 .container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 2rem;
-    position: relative;
-    min-height: 100vh;
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
 }
 
 .logout-button {
@@ -196,7 +189,30 @@ header.dark-mode{
     transform: scale(1.05);
 }
 
-/* Estilos responsivos */
+.return-btn {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1000;
+    background-color: #5d4037;
+    color: #fffaf0;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.return-btn:hover {
+    background-color: #4e342e;
+    transform: scale(1.05);
+}
+
+
 @media (max-width: 768px) {
     #favoritesGrid {
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));

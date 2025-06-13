@@ -1,6 +1,5 @@
 const API_URL = 'http://localhost:8000/api/v1';
 
-// Función para mostrar mensajes de error
 function showError(message) {
     const errorDiv = document.createElement('div');
     errorDiv.className = 'error-message show';
@@ -14,24 +13,20 @@ function showError(message) {
     }, 5000);
 }
 
-// Función para guardar el token en localStorage
 function saveToken(token) {
     localStorage.setItem('token', token);
 }
 
-// Función para verificar si el usuario está autenticado
 function isAuthenticated() {
     return localStorage.getItem('token') !== null;
 }
 
-// Función para redirigir si el usuario está autenticado
 function redirectIfAuthenticated() {
     if (isAuthenticated()) {
         window.location.href = 'landing.html';
     }
 }
 
-// Manejar el formulario de login
 const loginForm = document.getElementById('loginForm');
 if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
@@ -60,6 +55,9 @@ if (loginForm) {
             
             const data = await response.json();
             saveToken(data.access_token);
+            if (data.user_type) {
+                localStorage.setItem('user_type', data.user_type);
+            }
             window.location.href = 'landing.html';
             
         } catch (error) {
@@ -69,7 +67,6 @@ if (loginForm) {
     });
 }
 
-// Manejar el formulario de registro
 const registerForm = document.getElementById('registerForm');
 if (registerForm) {
     registerForm.addEventListener('submit', async (e) => {
@@ -79,6 +76,7 @@ if (registerForm) {
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
+        const userType = document.getElementById('userType').value;
         
         if (password !== confirmPassword) {
             showError('Las contraseñas no coinciden');
@@ -95,6 +93,7 @@ if (registerForm) {
                     email,
                     username,
                     password,
+                    user_type: userType
                 }),
             });
             
@@ -112,7 +111,6 @@ if (registerForm) {
     });
 }
 
-// Verificar autenticación al cargar la página
 document.addEventListener('DOMContentLoaded', () => {
     redirectIfAuthenticated();
 }); 

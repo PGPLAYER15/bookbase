@@ -7,7 +7,7 @@ export async function likeBook(bookId) {
     }
 
     const token = getToken();
-    console.log('Token:', token); // Debug: Ver el token
+    console.log('Token:', token);
 
     try {
         const response = await fetch(`${API_URL}/books/${bookId}/like`, {
@@ -17,7 +17,7 @@ export async function likeBook(bookId) {
             }
         });
 
-        console.log('Response status:', response.status); // Debug: Ver el status de la respuesta
+        console.log('Response status:', response.status);
 
         if (response.ok) {
             const likeButton = document.querySelector(`[data-book-id="${bookId}"]`);
@@ -28,8 +28,8 @@ export async function likeBook(bookId) {
         } else if (response.status === 400) {
             await unlikeBook(bookId);
         } else if (response.status === 401) {
-            console.log('Token inválido o expirado'); // Debug: Ver si el token es inválido
-            localStorage.removeItem('token'); // Limpiar el token inválido
+            console.log('Token inválido o expirado'); 
+            localStorage.removeItem('token');
             window.location.href = 'login.html';
         }
     } catch (error) {
@@ -114,7 +114,6 @@ function getToken() {
     return localStorage.getItem('token');
 }
 
-// Inicializar los likes cuando se carga la página
 document.addEventListener('DOMContentLoaded', async () => {
     if (isAuthenticated()) {
         const likedBooks = await fetchUserLikes();

@@ -6,6 +6,7 @@ class UserCreate(BaseModel):
     username: str
     email: EmailStr
     password: str
+    user_type: str = Field(default="reader", pattern="^(reader|writer)$")
     
     @field_validator('username')
     def name_must_contian_text(cls, v):
@@ -21,6 +22,7 @@ class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
     password: Optional[str] = None
     liked_books: Optional[List[BookRead]] = Field(default_factory=list)
+    user_type: Optional[str] = Field(default=None, pattern="^(reader|writer)$")
 
     class Config:
         from_attributes = True
@@ -30,6 +32,7 @@ class UserRead(BaseModel):
     username: str
     email: EmailStr
     liked_books: List[BookRead] = Field(default_factory=list)
+    user_type: str
 
     class Config:
         from_attributes = True
@@ -45,3 +48,4 @@ class UserBasicInfo(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    user_type: str

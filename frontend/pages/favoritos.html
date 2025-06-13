@@ -3,24 +3,20 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Favoritos - BookBase</title>
+        <title>Mis Favoritos - BookBase</title>
         <link rel="stylesheet" href="../assets/css/landing.css" />
         <link rel="stylesheet" href="../assets/css/favoritos.css" />
+        <link rel="stylesheet" href="../assets/css/darkMode.css" />
     </head>
     <body>
         <div class="container">
-            <header class="header">
-                <h1>Mis Favoritos</h1>
-                <p>Libros que te han gustado</p>
-            </header>
-
-            <div class="books-grid" id="favoritesGrid">
+            <h1>Mis Libros Favoritos</h1>
+            <div class="books-grid" id="booksGrid">
+                
             </div>
         </div>
 
-        <a href="landing.html">
-            <button class="likesToggle">🏠</button>
-        </a>
+        <a href="landing.html" class="return-btn">← Regresar</a>
         <button id="darkModeToggle" class="dark-mode-toggle">🌙</button>
         <button onclick="logout()" class="logout-button">Cerrar Sesión</button>
         

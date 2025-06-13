@@ -1,118 +1,105 @@
-import { fetchUserLikes, likeBook ,unlikeBook,likedBooks} from '../js/likes.js';
+import { fetchUserLikes, likeBook, unlikeBook } from './likes.js';
 
-const API_URL = 'http://localhost:8000/api/v1';
-const favoritesGrid = document.getElementById('favoritesGrid');
-
-function isAuthenticated() {
-    return localStorage.getItem('token') !== null;
-}
-
-function getToken() {
-    return localStorage.getItem('token');
-}
-
-function redirectToLogin() {
-    if (!isAuthenticated()) {
+document.addEventListener('DOMContentLoaded', async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
         window.location.href = 'login.html';
-    }
-}
-
-async function fetchFavoriteBooks() {
-    try {
-        const response = await fetch(`${API_URL}/users/me/likes`, {
-            headers: {
-                'Authorization': `Bearer ${getToken()}`
-            }
-        });
-
-        if (!response.ok) {
-            if (response.status === 401) {
-                redirectToLogin();
-                return;
-            }
-            throw new Error('Error al obtener los libros favoritos');
-        }
-
-        const likedBookIds = await response.json();
-        
-        // Obtener los detalles de cada libro
-        const books = await Promise.all(
-            likedBookIds.map(async (bookId) => {
-                const bookResponse = await fetch(`${API_URL}/books/${bookId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${getToken()}`
-                    }
-                });
-                if (bookResponse.ok) {
-                    return bookResponse.json();
-                }
-                return null;
-            })
-        );
-
-        return books.filter(book => book !== null);
-    } catch (error) {
-        console.error('Error:', error);
-        showError('Error al cargar los libros favoritos');
-        return [];
-    }
-}
-
-function renderFavoriteBooks(books) {
-    if (books.length === 0) {
-        favoritesGrid.innerHTML = `
-            <div class="empty-favorites">
-                <h2>No tienes libros favoritos</h2>
-                <p>¡Explora nuestra biblioteca y guarda tus libros favoritos!</p>
-                <a href="landing.html" class="btn">Explorar libros</a>
-            </div>
-        `;
         return;
     }
 
-    favoritesGrid.innerHTML = books.map(book => `
+    try {
+        const likedBooks = await fetchUserLikes();
+        if (likedBooks.length === 0) {
+            document.getElementById('booksGrid').innerHTML = `
+                <div class="empty-favorites">
+                    <h2>No tienes libros favoritos</h2>
+                    <p>¡Explora nuestra biblioteca y guarda tus libros favoritos!</p>
+                    <a href="landing.html" class="btn">Explorar libros</a>
+                </div>
+            `;
+            return;
+        }
+
+        // Obtener los detalles de cada libro
+        const booksPromises = likedBooks.map(bookId => 
+            fetch(`http://localhost:8000/api/v1/books/${bookId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then(res => res.json())
+        );
+
+        const books = await Promise.all(booksPromises);
+        displayBooks(books);
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al cargar los libros favoritos');
+    }
+});
+
+function displayBooks(books) {
+    const booksGrid = document.getElementById('booksGrid');
+    booksGrid.innerHTML = books.map(book => createBookCard(book)).join('');
+
+    // Configurar los botones de like
+    document.querySelectorAll('.like-button').forEach(button => {
+        button.addEventListener('click', async () => {
+            const bookId = parseInt(button.dataset.bookId);
+            await unlikeBook(bookId);
+            // Remover la tarjeta del libro
+            button.closest('.book-card').remove();
+            // Si no quedan libros, mostrar mensaje
+            if (document.querySelectorAll('.book-card').length === 0) {
+                booksGrid.innerHTML = `
+                    <div class="empty-favorites">
+                        <h2>No tienes libros favoritos</h2>
+                        <p>¡Explora nuestra biblioteca y guarda tus libros favoritos!</p>
+                        <a href="landing.html" class="btn">Explorar libros</a>
+                    </div>
+                `;
+            }
+        });
+    });
+}
+
+function createBookCard(book) {
+    const driveUrl = book.link;
+    const fileId = driveUrl.match(/[-\w]{25,}/);
+    const coverUrl = fileId ? 
+        `https://drive.google.com/thumbnail?id=${fileId[0]}&sz=w400` : 
+        book.link;
+
+    return `
         <div class="book-card">
-            <img src="${book.link}" alt="${book.title}" onerror="this.src='../assets/img/no-image.png'">
-            <div class="book-card-content">
+            <div class="book-image">
+                <img
+                    src="${coverUrl}" 
+                    alt="${book.title}" 
+                    onerror="this.onerror=null; this.src='../assets/img/no-image.png';"
+                    loading="lazy">
+            </div>
+            <div class="book-info">
                 <h3>${book.title}</h3>
                 <p class="author">${book.author}</p>
-                <p class="description">${book.description || 'Sin descripción'}</p>
-                <p class="category">${book.category || 'Sin categoría'}</p>
-                <p class="date">${new Date(book.created_at).toLocaleDateString()}</p>
+                <p class="category">${book.category}</p>
+                <p class="description">${book.description}</p>
             </div>
             <div class="book-actions">
                 <button class="like-button liked" data-book-id="${book.id}">❤️</button>
                 <button class="btn btn-secondary" onclick="viewDetails(${book.id})">Ver detalles</button>
             </div>
         </div>
-    `).join('');
-
-    
-    // Agregar event listeners a los botones de like
-    document.querySelectorAll('.like-button').forEach(button => {
-        button.addEventListener('click', async () => {
-            const bookId = parseInt(button.dataset.bookId);
-    
-            if (likedBooks.has(bookId)) {
-                console.log('Este libro ya tiene like.');
-                unlikeBook(bookId);
-                return; 
-            }
-            likeBook(bookId);
-    
-            likedBooks.add(bookId);
-        });
-    });
-
-    
+    `;
 }
 
-function showError(message) {
-    favoritesGrid.innerHTML = `<div class="error">${message}</div>`;
+function viewDetails(bookId) {
+    window.location.href = `detalles.html?id=${bookId}`;
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    redirectToLogin();
-    const favoriteBooks = await fetchFavoriteBooks();
-    renderFavoriteBooks(favoriteBooks);
-});
+function logout() {
+    localStorage.removeItem('token');
+    window.location.href = 'login.html';
+}
+
+window.viewDetails = viewDetails;
+window.logout = logout;

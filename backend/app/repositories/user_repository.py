@@ -21,7 +21,8 @@ class RepoUser(UserRepository):
             db_user = User(
             username=user.username,
             email=user.email,
-            hashed_password=hashed_password
+            hashed_password=hashed_password,
+            user_type=user.user_type
             )
             self.db.add(db_user)
             await self.db.commit()

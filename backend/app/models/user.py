@@ -10,6 +10,7 @@ class User(Base):
     email = Column(String(120), unique=True, index=True, nullable=False)
     admin = Column(Boolean, default=False, nullable=False)
     hashed_password = Column(String(128), nullable=False)
+    user_type = Column(String(20), nullable=False, default="reader")
     
     reviews = relationship("Review", back_populates="user", cascade="all, delete-orphan")
     

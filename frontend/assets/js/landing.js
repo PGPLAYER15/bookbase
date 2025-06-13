@@ -1,11 +1,10 @@
-import { fetchUserLikes, updateLikeButtons ,likeBook, unlikeBook,likedBooks} from './likes.js';
+import { fetchUserLikes, updateLikeButtons, likeBook, unlikeBook, likedBooks } from './likes.js';
 
 const API_URL = 'http://localhost:8000/api/v1';
 
 const booksGrid = document.getElementById('booksGrid');
 const searchInput = document.getElementById('searchInput');
 const filterButtons = document.querySelectorAll('.filter-btn');
-const darkModeToggle = document.getElementById('darkModeToggle');
 
 let currentFilter = 'all';
 let currentSearch = '';
@@ -34,7 +33,6 @@ export function logout() {
     window.location.href = 'login.html';
 }
 
-// Make logout function globally available
 window.logout = logout;
 
 async function fetchBooks(reset = false) {
@@ -102,22 +100,7 @@ function renderBooks() {
         return;
     }
 
-    booksGrid.innerHTML = filteredBooks.map(book => `
-        <div class="book-card">
-            <img src="${book.link}" alt="${book.title}" onerror="this.src='../assets/img/no-image.png'">
-            <div class="book-card-content">
-                <h3>${book.title}</h3>
-                <p class="author">${book.author}</p>
-                <p class="description">${book.description || 'Sin descripción'}</p>
-                <p class="category">${book.category || 'Sin categoría'}</p>
-                <p class="date">${new Date(book.created_at).toLocaleDateString()}</p>
-            </div>
-            <div class="book-actions">
-                <button class="like-button" data-book-id="${book.id}">🤍</button>
-                <button class="btn btn-secondary" onclick="viewDetails(${book.id})">Ver detalles</button>
-            </div>
-        </div>
-    `).join('');
+    booksGrid.innerHTML = filteredBooks.map(book => createBookCard(book)).join('');
 
     document.querySelectorAll('.like-button').forEach(button => {
         button.addEventListener('click', async () => {
@@ -133,6 +116,36 @@ function renderBooks() {
             likedBooks.add(bookId);
         });
     });
+}
+
+function createBookCard(book) {
+    const driveUrl = book.link;
+    const fileId = driveUrl.match(/[-\w]{25,}/);
+    const coverUrl = fileId ? 
+        `https://drive.google.com/thumbnail?id=${fileId[0]}&sz=w400` : 
+        book.link;
+
+    return `
+        <div class="book-card">
+            <div class="book-image">
+                <img
+                    src="${coverUrl}" 
+                    alt="${book.title}" 
+                    onerror="this.onerror=null; this.src='../assets/img/no-image.png';"
+                    loading="lazy">
+            </div>
+            <div class="book-info">
+                <h3>${book.title}</h3>
+                <p class="author">${book.author}</p>
+                <p class="category">${book.category}</p>
+                <p class="description">${book.description}</p>
+            </div>
+            <div class="book-actions">
+                <button class="like-button" data-book-id="${book.id}">🤍</button>
+                <button class="btn btn-secondary" onclick="viewDetails(${book.id})">Ver detalles</button>
+            </div>
+        </div>
+    `;
 }
 
 function handleSearch() {
@@ -161,25 +174,11 @@ function handleScroll() {
     }
 }
 
-function toggleDarkMode() {
-    document.body.classList.toggle('dark-mode');
-    const isDarkMode = document.body.classList.contains('dark-mode');
-    localStorage.setItem('darkMode', isDarkMode);
-    darkModeToggle.textContent = isDarkMode ? '☀️' : '🌙';
-}
-
 searchInput.addEventListener('input', debounce(handleSearch, 500));
 filterButtons.forEach(btn => {
     btn.addEventListener('click', () => handleFilter(btn.dataset.filter));
 });
 window.addEventListener('scroll', handleScroll);
-
-const savedDarkMode = localStorage.getItem('darkMode') === 'true';
-if (savedDarkMode) {
-    document.body.classList.add('dark-mode');
-    darkModeToggle.textContent = '☀️';
-}
-darkModeToggle.addEventListener('click', toggleDarkMode);
 
 function debounce(func, wait) {
     let timeout;
@@ -196,4 +195,19 @@ function debounce(func, wait) {
 document.addEventListener('DOMContentLoaded', () => {
     redirectToLogin();
     fetchBooks();
+    const addBookBtn = document.getElementById('addBookBtn');
+    const userType = localStorage.getItem('user_type');
+    if (addBookBtn) {
+        if (userType === 'writer') {
+            addBookBtn.style.display = 'inline-block';
+        } else {
+            addBookBtn.style.display = 'none';
+        }
+    }
 });
+
+function viewDetails(bookId) {
+    window.location.href = `detalles.html?id=${bookId}`;
+}
+
+window.viewDetails = viewDetails;

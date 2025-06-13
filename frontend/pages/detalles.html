@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Libro - BookBase</title>
+    <link rel="stylesheet" href="../assets/css/detalles.css">
+    <link rel="stylesheet" href="../assets/css/darkMode.css">
+</head>
+<body>
+    <div class="container">
+        <div class="book-details">
+            <div class="book-header">
+                <div class="book-cover">
+                    <img id="bookImage" src="" alt="Portada del libro" onerror="this.onerror=null; this.src='../assets/img/no-image.png';">
+                </div>
+                <div class="book-info">
+                    <h1 id="bookTitle"></h1>
+                    <p class="author" id="bookAuthor"></p>
+                    <p class="category" id="bookCategory"></p>
+                    <p class="description" id="bookDescription"></p>
+                    <div class="book-actions">
+                        <button class="btn-primary" id="readButton">Leer Libro</button>
+                        <button class="like-button" id="likeButton">🤍</button>
+                    </div>
+                </div>
+            </div>
+            <div class="book-content" id="bookContent">
+                <iframe id="bookFrame" style="display: none;" width="100%" height="800px" frameborder="0"></iframe>
+                <div id="loadingMessage" class="loading-message">
+                    <p>Haz clic en "Leer Libro" para comenzar la lectura</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="landing.html" class="return-btn">← Regresar</a>
+    <button id="darkModeToggle" class="dark-mode-toggle">🌙</button>
+    <button onclick="logout()" class="logout-button">Cerrar Sesión</button>
+
+    <script type="module" src="../assets/js/detalles.js"></script>
+    <script src="../assets/js/darkMode.js"></script>
+</body>
+</html> 

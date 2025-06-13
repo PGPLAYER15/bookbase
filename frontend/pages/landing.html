@@ -3,8 +3,9 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>BookBase</title>
+        <title>BookBase - Tu Biblioteca Digital</title>
         <link rel="stylesheet" href="../assets/css/landing.css" />
+        <link rel="stylesheet" href="../assets/css/darkMode.css" />
     </head>
     <body>
         <div class="container">
@@ -35,9 +36,14 @@
             </div>
         </div>
 
-        <a href="favoritos.html">
-            <button class="likesToggle">❤️</button>
-        </a>
+        <div class="nav-buttons">
+            <a href="favoritos.html">
+                <button class="likesToggle">❤️</button>
+            </a>
+            <a href="publicar.html" id="addBookBtn" style="display:none;">
+                <button class="add-book-btn">Agregar libro</button>
+            </a>
+        </div>
         <button id="darkModeToggle" class="dark-mode-toggle">🌙</button>
         <button onclick="logout()" class="logout-button">Cerrar Sesión</button>
         <script type="module" src="../assets/js/landing.js"></script>

@@ -11,9 +11,16 @@ class BookCreate(BaseModel):
     
     @field_validator('title')
     def name_must_contian_text(cls, v):
-        if not v.isalpha():
-            raise ValueError('name must contain only letters')
+        if not all(c.isalnum() or c.isspace() or c in ".,;:¿?¡!-_()" for c in v):
+            raise ValueError('El título contiene caracteres no permitidos')
         return v
+
+    @model_validator(mode='after')
+    def convert_link_to_str(self):
+        if isinstance(self.link, HttpUrl):
+            self.link = str(self.link)
+        return self
+
     class Config:
         from_attributes = True
 
