@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // Obtener los detalles de cada libro
         const booksPromises = likedBooks.map(bookId => 
             fetch(`http://localhost:8000/api/v1/books/${bookId}`, {
                 headers: {
